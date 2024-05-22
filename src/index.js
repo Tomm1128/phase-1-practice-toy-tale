@@ -4,9 +4,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const toySection = document.getElementById("toy-collection")
   const addToyForm = document.querySelector("form.add-toy-form")
   let toyCollection
+  let likeBtnList 
 
-  const addBtn = document.querySelector("#new-toy-btn");
-  const toyFormContainer = document.querySelector(".container");
+  const addBtn = document.querySelector("#new-toy-btn")
+  const toyFormContainer = document.querySelector(".container")
+
   addBtn.addEventListener("click", () => {
     // hide & seek with the form
     addToy = !addToy;
@@ -15,10 +17,37 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       toyFormContainer.style.display = "none";
     }
-  });
+  })
+
+  const updateLikeCount = (event) => {
+    let clickedToyId = event.target.id
+    const lookUpUrl = `http://localhost:3000/toys/${clickedToyId}`
+    const likesSection = event.target.parentElement.querySelector("p")
+    const likeSectionText = likesSection.textContent 
+    debugger
+    let countOfLikes = likeSectionText.split(" ")[0]
+    countOfLikes ++
+
+    const newLikeCount = `${countOfLikes} Likes`
+    
+    fetch(lookUpUrl, {
+      method: "PATCH", 
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body:JSON.stringify({
+        likes: countOfLikes
+      })
+    })
+    .then(() => {
+      likesSection.textContent = newLikeCount
+    })
+  }
 
   const createToyCard = (resp) => {
     toyCollection = resp
+    let buttonArray = []
     toyCollection.forEach((toy) => {
       const div = document.createElement("div")
       const h2 = document.createElement("h2")
@@ -34,11 +63,19 @@ document.addEventListener("DOMContentLoaded", () => {
       imgTag.src = toy.image
       p.textContent = `${toy.likes} Likes`
       btnTag.id = toy.id
+
+      buttonArray.push(btnTag)
+
       div.appendChild(h2)
       div.appendChild(imgTag)
       div.appendChild(p)
       div.appendChild(btnTag)
       toySection.appendChild(div)
+    })
+    buttonArray.forEach((btn) => {
+      btn.addEventListener("click", (event) => {
+        updateLikeCount(event)
+      })
     })
   }
 
@@ -64,7 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
     })
     .then(() => {
       window.location.reload();
-  })
+    })
   })
 
   fetch("http://localhost:3000/toys")
