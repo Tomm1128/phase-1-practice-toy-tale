@@ -57,14 +57,15 @@ document.addEventListener("DOMContentLoaded", () => {
     div.appendChild(p)
     div.appendChild(btnTag)
     toySection.appendChild(div)
+
+    likeButtonArray.forEach((btn) => {
+      btn.addEventListener("click", event => updateLikeCount(event))
+    })
   }
 
   const handleToyCard = (resp) => {
     toyCollection = resp
     toyCollection.forEach(toy => createToyCard(toy))
-    likeButtonArray.forEach((btn) => {
-      btn.addEventListener("click", event => updateLikeCount(event))
-    })
   }
 
   const createToy = (event) => {
@@ -78,7 +79,6 @@ document.addEventListener("DOMContentLoaded", () => {
       image: imgUrl,
       likes: 0
     }
-    
     
     fetch("http://localhost:3000/toys", {
       method: "POST", 
