@@ -3,28 +3,16 @@ let addToy = false;
 document.addEventListener("DOMContentLoaded", () => {
   const toySection = document.getElementById("toy-collection")
   const addToyForm = document.querySelector("form.add-toy-form")
-  let toyCollection
-  let likeBtnList 
-
   const addBtn = document.querySelector("#new-toy-btn")
   const toyFormContainer = document.querySelector(".container")
-
-  addBtn.addEventListener("click", () => {
-    // hide & seek with the form
-    addToy = !addToy;
-    if (addToy) {
-      toyFormContainer.style.display = "block";
-    } else {
-      toyFormContainer.style.display = "none";
-    }
-  })
+  let toyCollection
+  let buttonArray = []
 
   const updateLikeCount = (event) => {
     let clickedToyId = event.target.id
     const lookUpUrl = `http://localhost:3000/toys/${clickedToyId}`
     const likesSection = event.target.parentElement.querySelector("p")
     const likeSectionText = likesSection.textContent 
-    debugger
     let countOfLikes = likeSectionText.split(" ")[0]
     countOfLikes ++
 
@@ -45,41 +33,40 @@ document.addEventListener("DOMContentLoaded", () => {
     })
   }
 
-  const createToyCard = (resp) => {
+  const createToyCard = (toy) => {
+    const div = document.createElement("div")
+    const h2 = document.createElement("h2")
+    const imgTag = document.createElement("img")
+    const p = document.createElement("p")
+    const btnTag = document.createElement("button")
+
+    div.className = "card"
+    imgTag.className = "toy-avatar"
+    btnTag.className = "like-btn"
+
+    h2.textContent = toy.name
+    imgTag.src = toy.image
+    p.textContent = `${toy.likes} Likes`
+    btnTag.id = toy.id
+
+    buttonArray.push(btnTag)
+
+    div.appendChild(h2)
+    div.appendChild(imgTag)
+    div.appendChild(p)
+    div.appendChild(btnTag)
+    toySection.appendChild(div)
+  }
+
+  const handleToyCard = (resp) => {
     toyCollection = resp
-    let buttonArray = []
-    toyCollection.forEach((toy) => {
-      const div = document.createElement("div")
-      const h2 = document.createElement("h2")
-      const imgTag = document.createElement("img")
-      const p = document.createElement("p")
-      const btnTag = document.createElement("button")
-
-      div.className = "card"
-      imgTag.className = "toy-avatar"
-      btnTag.className = "like-btn"
-
-      h2.textContent = toy.name
-      imgTag.src = toy.image
-      p.textContent = `${toy.likes} Likes`
-      btnTag.id = toy.id
-
-      buttonArray.push(btnTag)
-
-      div.appendChild(h2)
-      div.appendChild(imgTag)
-      div.appendChild(p)
-      div.appendChild(btnTag)
-      toySection.appendChild(div)
-    })
+    toyCollection.forEach(toy => createToyCard(toy))
     buttonArray.forEach((btn) => {
-      btn.addEventListener("click", (event) => {
-        updateLikeCount(event)
-      })
+      btn.addEventListener("click", event => updateLikeCount(event))
     })
   }
 
-  addToyForm.addEventListener("submit", (event) => {
+  const createToy = (event) => {
     event.preventDefault()
     let toyName = event.target[0].value
     let imgUrl = event.target[1].value
@@ -102,11 +89,22 @@ document.addEventListener("DOMContentLoaded", () => {
     .then(() => {
       window.location.reload();
     })
+  }
+
+  addBtn.addEventListener("click", () => {
+    addToy = !addToy;
+    if (addToy) {
+      toyFormContainer.style.display = "block";
+    } else {
+      toyFormContainer.style.display = "none";
+    }
   })
+
+  addToyForm.addEventListener("submit", event => createToy(event))
 
   fetch("http://localhost:3000/toys")
   .then(resp => resp.json())
-  .then(resp => createToyCard(resp))
+  .then(resp => handleToyCard(resp))
 
 
 });
