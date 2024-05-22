@@ -72,6 +72,12 @@ document.addEventListener("DOMContentLoaded", () => {
     let toyName = event.target[0].value
     let imgUrl = event.target[1].value
     let toyId = (toyCollection.length + 1).toString()
+    let toy = {
+      id: toyId,
+      name: toyName,
+      image: imgUrl,
+      likes: 0
+    }
     
     
     fetch("http://localhost:3000/toys", {
@@ -80,15 +86,10 @@ document.addEventListener("DOMContentLoaded", () => {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body:JSON.stringify({
-        id: toyId,
-        name: toyName,
-        image: imgUrl,
-        likes: 0
-      })
+      body:JSON.stringify(toy)
     })
     .then(() => {
-      window.location.reload();
+      createToyCard(toy)
     })
   }
 
