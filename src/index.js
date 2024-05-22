@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const addBtn = document.querySelector("#new-toy-btn")
   const toyFormContainer = document.querySelector(".container")
   let toyCollection
-  let buttonArray = []
+  let likeButtonArray = []
 
   const updateLikeCount = (event) => {
     let clickedToyId = event.target.id
@@ -48,8 +48,9 @@ document.addEventListener("DOMContentLoaded", () => {
     imgTag.src = toy.image
     p.textContent = `${toy.likes} Likes`
     btnTag.id = toy.id
+    btnTag.textContent = "Like ❤️"
 
-    buttonArray.push(btnTag)
+    likeButtonArray.push(btnTag)
 
     div.appendChild(h2)
     div.appendChild(imgTag)
@@ -61,7 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const handleToyCard = (resp) => {
     toyCollection = resp
     toyCollection.forEach(toy => createToyCard(toy))
-    buttonArray.forEach((btn) => {
+    likeButtonArray.forEach((btn) => {
       btn.addEventListener("click", event => updateLikeCount(event))
     })
   }
@@ -105,6 +106,4 @@ document.addEventListener("DOMContentLoaded", () => {
   fetch("http://localhost:3000/toys")
   .then(resp => resp.json())
   .then(resp => handleToyCard(resp))
-
-
 });
