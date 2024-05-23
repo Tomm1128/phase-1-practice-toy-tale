@@ -24,8 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
       toyCard.remove()
     })
     .catch(error => {
-      console.error('Error deleting resource:', error);
-    });
+      console.error('Error deleting resource:', error)
+    })
   }
 
   const updateLikeCount = (event) => {
