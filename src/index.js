@@ -7,6 +7,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const toyFormContainer = document.querySelector(".container")
   let toyCollection
   let likeButtonArray = []
+  let deleteButtonArray = []
+
+  const deleteToy = (event) => {
+    let toyCard = event.target.parentElement 
+    let toyId = event.target.id 
+
+    fetch(`http://localhost:3000/toys/${toyId}`, {
+      method: "Delete",
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+    .then(resp => resp.json())
+    .then(data => {
+      toyCard.remove()
+    })
+    .catch(error => {
+      console.error('Error deleting resource:', error);
+    });
+  }
 
   const updateLikeCount = (event) => {
     let clickedToyId = event.target.id
@@ -38,28 +58,38 @@ document.addEventListener("DOMContentLoaded", () => {
     const h2 = document.createElement("h2")
     const imgTag = document.createElement("img")
     const p = document.createElement("p")
-    const btnTag = document.createElement("button")
+    const likeBtn = document.createElement("button")
+    const deleteBtn = document.createElement("button")
 
     div.className = "card"
     imgTag.className = "toy-avatar"
-    btnTag.className = "like-btn"
+    likeBtn.className = "like-btn"
+    deleteBtn.className - "delete-btn"
 
     h2.textContent = toy.name
     imgTag.src = toy.image
     p.textContent = `${toy.likes} Likes`
-    btnTag.id = toy.id
-    btnTag.textContent = "Like ❤️"
+    likeBtn.id = toy.id
+    likeBtn.textContent = "Like ❤️"
+    deleteBtn.id = toy.id
+    deleteBtn.textContent = "Delete"
 
-    likeButtonArray.push(btnTag)
+    likeButtonArray.push(likeBtn)
+    deleteButtonArray.push(deleteBtn)
 
     div.appendChild(h2)
     div.appendChild(imgTag)
     div.appendChild(p)
-    div.appendChild(btnTag)
+    div.appendChild(likeBtn)
+    div.appendChild(deleteBtn)
     toySection.appendChild(div)
 
     likeButtonArray.forEach((btn) => {
       btn.addEventListener("click", event => updateLikeCount(event))
+    })
+
+    deleteButtonArray.forEach((btn) => {
+      btn.addEventListener("click", event => deleteToy(event))
     })
   }
 
